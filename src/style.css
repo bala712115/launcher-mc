@@ -1,0 +1,247 @@
+:root {
+  --bg: #0d1117;
+  --panel: rgba(20, 28, 38, 0.92);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #f2f7f4;
+  --muted: #a9b6bf;
+  --green: #4caf50;
+  --green-hover: #68c76d;
+  --green-dark: #2d7a38;
+  --shadow: rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #0d1117;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(76, 175, 80, 0.2), transparent 28%),
+    radial-gradient(circle at 82% 90%, rgba(43, 104, 53, 0.35), transparent 30%),
+    linear-gradient(135deg, #101a15, #0b1018 55%, #111922);
+}
+
+/* Barre de défilement principale */
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #0a0f14;
+}
+
+body::-webkit-scrollbar-thumb {
+  border: 3px solid #0a0f14;
+  border-radius: 12px;
+  background: #41664a;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
+
+.launcher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: clamp(16px, 4vw, 42px);
+}
+
+.launcher section {
+  width: min(820px, 100%);
+  margin: auto;
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--panel);
+  box-shadow: 0 25px 70px var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--green-hover);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+h1 {
+  margin: 0 0 32px;
+  color: #fff;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+label {
+  display: block;
+  margin: 18px 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  margin: 0;
+  padding: 15px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  background: #131c25;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder {
+  color: #71808b;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.18);
+}
+
+button {
+  width: 100%;
+  margin-top: 26px;
+  padding: 17px 24px;
+  border: 0;
+  border-bottom: 5px solid var(--green-dark);
+  border-radius: 10px;
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--green);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--green-hover);
+  box-shadow: 0 11px 32px rgba(76, 175, 80, 0.34);
+  transform: translateY(-2px);
+}
+
+button:active:not(:disabled) {
+  border-bottom-width: 2px;
+  transform: translateY(2px);
+}
+
+button:disabled {
+  border-bottom-color: #4a5554;
+  color: #aeb8b3;
+  background: #65706d;
+  box-shadow: none;
+  cursor: wait;
+}
+
+#logs {
+  min-height: 110px;
+  max-height: 230px;
+  margin: 28px 0 0;
+  padding: 16px;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: #b7e4ba;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: rgba(5, 10, 14, 0.65);
+}
+
+/* Barre de scroll des logs */
+#logs::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+#logs::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #0b1116;
+}
+
+#logs::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #3e5645;
+}
+
+#logs::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
+
+@media (max-width: 600px) {
+  .launcher {
+    display: block;
+    padding: 14px;
+  }
+
+  .launcher section {
+    border-radius: 16px;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  h1 {
+    margin-bottom: 24px;
+  }
+
+  #logs {
+    max-height: 180px;
+    font-size: 0.74rem;
+  }
+}
+
+.account-status {
+  min-height: 22px;
+  margin: 10px 0 4px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+#loginButton {
+  margin-top: 12px;
+  padding: 12px 18px;
+  border-bottom-width: 3px;
+  font-size: 0.9rem;
+  background: #2d8fbe;
+  border-bottom-color: #1a5d7e;
+}
+
+#loginButton:hover:not(:disabled) {
+  background: #42a8d8;
+  box-shadow: 0 10px 26px rgba(45, 143, 190, 0.28);
+}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon Launcher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="launcher">
+    <section>
+      <p class="eyebrow">MINECRAFT JAVA EDITION</p>
+      <h1>Mon Launcher</h1>
+
+<label for="username">Pseudo</label>
+<input
+  id="username"
+  type="text"
+  maxlength="16"
+  value="Joueur"
+  placeholder="Ton pseudo"
+/>
+
+<label for="accountMode">Mode de compte</label>
+
+<select id="accountMode">
+  <option value="offline">Offline — serveur de test</option>
+  <option value="online">Online — compte Microsoft</option>
+</select>
+
+<button id="loginButton" type="button" hidden>
+  Se connecter avec Microsoft
+</button>
+
+<p id="accountStatus" class="account-status">
+  Mode offline sélectionné.
+</p>
+
+<label for="version">Version</label>
+<select id="version">
+  <option value="1.21.1">Minecraft 1.21.1</option>
+  <option value="1.20.1">Minecraft 1.20.1</option>
+</select>
+
+<label for="ram">Mémoire RAM</label>
+<select id="ram">
+  <option value="2048">2 Go</option>
+  <option value="4096" selected>4 Go</option>
+  <option value="6144">6 Go</option>
+  <option value="8192">8 Go</option>
+</select>
+
+
+<div id="logs">
+  <div id="statusLine">Prêt à lancer.</div>
+</div>
+
+      <button id="playButton">Jouer</button>
+  
+    </section>
+  </main>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
