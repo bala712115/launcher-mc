@@ -245,3 +245,28 @@ button:disabled {
   background: #42a8d8;
   box-shadow: 0 10px 26px rgba(45, 143, 190, 0.28);
 }
+
+/* Supprime les bordures et fonds blancs autour des catégories */
+.settings-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.25rem 0;
+  background: transparent;
+}
+
+/* Cache la ligne par défaut du <legend> si elle crée un cadre */
+.settings-group legend {
+  display: block;
+  width: auto;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #e5e5e5; /* adapte selon ton thème */
+}
+
+/* Si tu as des bordures sur .field ou .field-row, retire-les aussi */
+.field,
+.field-row {
+  border: none;
+  background: transparent;
+}

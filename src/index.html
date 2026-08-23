@@ -3,60 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
   <title>Mon Launcher</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="launcher">
-    <section>
-      <p class="eyebrow">MINECRAFT JAVA EDITION</p>
-      <h1>Mon Launcher</h1>
+    <section class="launcher-panel" aria-labelledby="launcher-title">
+      <header class="launcher-header">
+        <p class="eyebrow">MINECRAFT JAVA EDITION</p>
+        <h1 id="launcher-title">Mon Launcher</h1>
+        <p class="subtitle">Lancez votre version Minecraft avec Fabric.</p>
+      </header>
 
-<label for="username">Pseudo</label>
-<input
-  id="username"
-  type="text"
-  maxlength="16"
-  value="Joueur"
-  placeholder="Ton pseudo"
-/>
+      <form id="launcherForm" novalidate>
+        <fieldset class="settings-group">
+          <legend>Compte</legend>
 
-<label for="accountMode">Mode de compte</label>
+          <div class="field">
+            <label for="accountMode">Mode de compte</label>
+            <select id="accountMode" name="accountMode">
+              <option value="offline" selected>Offline</option>
+              <option value="online">Online — compte Microsoft</option>
+            </select>
+          </div>
 
-<select id="accountMode">
-  <option value="offline">Offline — serveur de test</option>
-  <option value="online">Online — compte Microsoft</option>
-</select>
+          <div id="usernameGroup" class="field">
+            <label for="username">Pseudo Minecraft</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              maxlength="16"
+              value="Joueur"
+              placeholder="Ton pseudo"
+              autocomplete="nickname"
+            />
+          </div>
 
-<button id="loginButton" type="button" hidden>
-  Se connecter avec Microsoft
-</button>
+          <div id="microsoftGroup" class="microsoft-account" hidden>
+            <p class="account-label">Compte Microsoft</p>
+            <p id="accountName" class="account-name">Aucun compte connecté</p>
+          </div>
 
-<p id="accountStatus" class="account-status">
-  Mode offline sélectionné.
-</p>
+          <button id="loginButton" class="secondary-button" type="button" hidden>
+            Se connecter avec Microsoft
+          </button>
 
-<label for="version">Version</label>
-<select id="version">
-  <option value="1.21.1">Minecraft 1.21.1</option>
-  <option value="1.20.1">Minecraft 1.20.1</option>
-</select>
+          <p id="accountStatus" class="account-status" role="status" aria-live="polite">
+            Mode offline sélectionné.
+          </p>
+        </fieldset>
 
-<label for="ram">Mémoire RAM</label>
-<select id="ram">
-  <option value="2048">2 Go</option>
-  <option value="4096" selected>4 Go</option>
-  <option value="6144">6 Go</option>
-  <option value="8192">8 Go</option>
-</select>
+        <fieldset class="settings-group">
+          <legend>Jeu</legend>
 
+          <div class="field">
+            <label for="ram">Mémoire RAM</label>
+              <select id="ram" name="ram">
+            <option value="2048">2 Go</option>
+            <option value="4096" selected>4 Go</option>
+            <option value="6144">6 Go</option>
+            <option value="8192">8 Go</option>
+            <option value="10240">10 Go</option>
+            <option value="12288">12 Go</option>
+            <option value="14336">14 Go</option>
+            <option value="16384">16 Go</option>
+            <option value="18432">18 Go</option>
+            <option value="20480">20 Go</option>
+            <option value="22528">22 Go</option>
+            <option value="24576">24 Go</option>
+            <option value="26624">26 Go</option>
+            <option value="28672">28 Go</option>
+            <option value="30720">30 Go</option>
+            <option value="32768">32 Go</option>
+            <option value="34816">34 Go</option>
+            <option value="36864">36 Go</option>
+            <option value="38912">38 Go</option>
+            <option value="40960">40 Go</option>
+            <option value="43008">42 Go</option>
+            <option value="45056">44 Go</option>
+            <option value="47104">46 Go</option>
+            <option value="49152">48 Go</option>
+            <option value="51200">50 Go</option>
+            <option value="53248">52 Go</option>
+            <option value="55296">54 Go</option>
+            <option value="57344">56 Go</option>
+            <option value="59392">58 Go</option>
+            <option value="61440">60 Go</option>
+            <option value="63488">62 Go</option>
+            <option value="65536">64 Go</option>
+          </select>
+          </div>
+        </fieldset>
 
-<div id="logs">
-  <div id="statusLine">Prêt à lancer.</div>
-</div>
+        <section class="logs-panel" aria-label="Logs de lancement">
+          <div class="logs-header">
+            <span>Journal de lancement</span>
+            <span id="statusLine" role="status" aria-live="polite">Prêt à lancer.</span>
+          </div>
+          <pre id="logs" tabindex="0" aria-live="polite"></pre>
+        </section>
 
-      <button id="playButton">Jouer</button>
-  
+        <button id="playButton" class="play-button" type="submit">
+          Jouer
+        </button>
+      </form>
     </section>
   </main>
 

@@ -3,13 +3,18 @@ const loginButton = document.getElementById("loginButton");
 
 const logs = document.getElementById("logs");
 const username = document.getElementById("username");
-const version = document.getElementById("version");
 const ram = document.getElementById("ram");
 
 const accountMode = document.getElementById("accountMode");
 const accountStatus = document.getElementById("accountStatus");
 
+// Éléments pour gérer l’affichage du compte Microsoft
+const usernameGroup = document.getElementById("usernameGroup");
+const microsoftGroup = document.getElementById("microsoftGroup");
+const accountName = document.getElementById("accountName");
+
 let onlineAccount = null;
+
 
 function addLog(message) {
   const time = new Date().toLocaleTimeString();
@@ -28,35 +33,48 @@ function addLog(message) {
   logs.scrollTop = logs.scrollHeight;
 }
 
+
 function clearLogs() {
   logs.innerHTML = "";
 }
 
+
 function refreshAccountMode() {
-  const offline = accountMode.value === "offline";
+  const isOffline = accountMode.value === "offline";
 
-  username.disabled = !offline;
-  loginButton.hidden = offline;
+  // Affiche / cache le champ pseudo
+  usernameGroup.hidden = !isOffline;
+  username.disabled = !isOffline;
 
-  if (offline) {
-    accountStatus.textContent =
-      "Mode offline : utilisable uniquement sur un serveur de test configuré en offline.";
+  // Affiche / cache la zone compte Microsoft + bouton de login
+  microsoftGroup.hidden = isOffline;
+  loginButton.hidden = isOffline;
+
+  // Gestion du texte de statut
+  if (isOffline) {
+    accountStatus.textContent = "Mode offline";
+    accountName.textContent = "Compte non connecté";
+    playButton.disabled = false;
     return;
   }
 
+  // Mode online
   if (onlineAccount) {
-    accountStatus.textContent =
-      `Connecté avec Microsoft : ${onlineAccount.name}`;
-    return;
+    accountStatus.textContent = `Connecté avec Microsoft : ${onlineAccount.name}`;
+    accountName.textContent = onlineAccount.name;
+    playButton.disabled = false;
+  } else {
+    accountStatus.textContent = "Aucun compte Microsoft connecté.";
+    accountName.textContent = "Compte non connecté";
+    playButton.disabled = true;
   }
-
-  accountStatus.textContent =
-    "Aucun compte Microsoft connecté.";
 }
+
 
 window.launcher.onMinecraftLog((message) => {
   addLog(message);
 });
+
 
 window.launcher.onMinecraftProgress((progress) => {
   const type = progress.type || "fichiers";
@@ -71,16 +89,17 @@ window.launcher.onMinecraftProgress((progress) => {
     logs.appendChild(progressLine);
   }
 
-  progressLine.textContent =
-    `[PROGRESSION] ${type} : ${task} / ${total}`;
+  progressLine.textContent = `[PROGRESSION] ${type} : ${task} / ${total}`;
 
   logs.scrollTop = logs.scrollHeight;
 });
+
 
 window.launcher.onMinecraftFinished(() => {
   playButton.disabled = false;
   addLog("Le bouton Jouer est de nouveau disponible.");
 });
+
 
 accountMode.addEventListener("change", () => {
   refreshAccountMode();
@@ -91,6 +110,7 @@ accountMode.addEventListener("change", () => {
     addLog("Mode online sélectionné.");
   }
 });
+
 
 loginButton.addEventListener("click", async () => {
   loginButton.disabled = true;
@@ -107,6 +127,7 @@ loginButton.addEventListener("click", async () => {
     loginButton.disabled = false;
   }
 });
+
 
 playButton.addEventListener("click", async () => {
   const mode = accountMode.value;
@@ -137,14 +158,13 @@ playButton.addEventListener("click", async () => {
 
   addLog("Préparation du lancement…");
   addLog(`Mode : ${mode === "online" ? "online (Microsoft)" : "offline"}`);
-  addLog(`Version sélectionnée : ${version.value}`);
   addLog(`Pseudo : ${launchUsername}`);
   addLog(`RAM attribuée : ${ram.value} Mo`);
 
   try {
     const result = await window.launcher.launchMinecraft({
       username: launchUsername,
-      version: version.value,
+      version: "1.21.1", // version fixe
       ram: Number(ram.value),
       mode,
       account: mode === "online" ? onlineAccount : null
@@ -159,4 +179,6 @@ playButton.addEventListener("click", async () => {
   }
 });
 
+
+// Initialisation
 refreshAccountMode();
