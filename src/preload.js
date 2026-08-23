@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, shell } = require("electron");
 
 contextBridge.exposeInMainWorld("launcher", {
   launchMinecraft: (settings) =>
@@ -17,5 +17,8 @@ contextBridge.exposeInMainWorld("launcher", {
     ipcRenderer.on("minecraft-progress", (_, progress) => callback(progress)),
 
   onMinecraftFinished: (callback) =>
-    ipcRenderer.on("minecraft-finished", () => callback())
+    ipcRenderer.on("minecraft-finished", () => callback()),
+
+  openUrl: (url) =>
+    shell.openExternal(url)
 });

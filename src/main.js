@@ -1,11 +1,13 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
 const { loginWithMicrosoft } = require("./microsoftAuth");
 
+
 let mainWindow;
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -14,6 +16,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 560,
     autoHideMenuBar: true,
+    icon: path.join(__dirname, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -22,7 +25,22 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
+
+  // Emp\u00eache l'ouverture de nouvelles fen\u00eatres dans Electron
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
+
+  // Intercepte les navigations (liens, formulaires, etc.)
+  mainWindow.webContents.on("will-navigate", (event, url) => {
+    if (!url.startsWith("file://") && !url.startsWith("http://localhost")) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 }
+
 
 function sendLog(message) {
   const text = String(message);
@@ -33,11 +51,13 @@ function sendLog(message) {
   }
 }
 
+
 function sendFinished() {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send("minecraft-finished");
   }
 }
+
 
 function offlineUuid(username) {
   const buffer = crypto
@@ -59,11 +79,13 @@ function offlineUuid(username) {
   ].join("-");
 }
 
+
 function getOsName() {
   if (process.platform === "win32") return "windows";
   if (process.platform === "darwin") return "osx";
   return "linux";
 }
+
 
 function rulesAllow(rules) {
   if (!Array.isArray(rules) || rules.length === 0) return true;
@@ -85,11 +107,12 @@ function rulesAllow(rules) {
   return allowed;
 }
 
+
 function mavenPathFromName(name) {
   const parts = name.split(":");
 
   if (parts.length < 3) {
-    throw new Error(`Coordonnées Maven invalides : ${name}`);
+    throw new Error(`Coordonn\u00e9es Maven invalides : ${name}`);
   }
 
   const [group, artifact, version] = parts;
@@ -98,9 +121,11 @@ function mavenPathFromName(name) {
   return `${group.replace(/\./g, "/")}/${artifact}/${version}/${artifact}-${version}${classifier}.jar`;
 }
 
+
 function mavenUrl(baseUrl, name) {
   return `${baseUrl.replace(/\/$/, "")}/${mavenPathFromName(name)}`;
 }
+
 
 function walkJars(directory, result = []) {
   if (!fs.existsSync(directory)) return result;
@@ -122,6 +147,7 @@ function walkJars(directory, result = []) {
   return result;
 }
 
+
 async function fetchJson(url, label) {
   const response = await fetch(url);
 
@@ -132,18 +158,19 @@ async function fetchJson(url, label) {
   return response.json();
 }
 
+
 async function downloadFile(url, destination, label) {
   if (fs.existsSync(destination) && fs.statSync(destination).size > 0) {
     return destination;
   }
 
   fs.mkdirSync(path.dirname(destination), { recursive: true });
-  sendLog(`Téléchargement : ${label}`);
+  sendLog(`T\u00e9l\u00e9chargement : ${label}`);
 
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Échec téléchargement ${label} : HTTP ${response.status}`);
+    throw new Error(`\u00c9chec t\u00e9l\u00e9chargement ${label} : HTTP ${response.status}`);
   }
 
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -151,6 +178,7 @@ async function downloadFile(url, destination, label) {
 
   return destination;
 }
+
 
 async function downloadLibrary(gameDirectory, library) {
   if (!rulesAllow(library.rules)) return null;
@@ -163,6 +191,7 @@ async function downloadLibrary(gameDirectory, library) {
   return downloadFile(url, destination, library.name || relativePath);
 }
 
+
 async function getVanillaProfile(gameDirectory, minecraftVersion) {
   const versionDirectory = path.join(gameDirectory, "versions", minecraftVersion);
   const profilePath = path.join(versionDirectory, `${minecraftVersion}.json`);
@@ -173,7 +202,7 @@ async function getVanillaProfile(gameDirectory, minecraftVersion) {
 
   const manifest = await fetchJson(
     "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
-    "Impossible de récupérer le manifeste Minecraft"
+    "Impossible de r\u00e9cup\u00e9rer le manifeste Minecraft"
   );
 
   const versionEntry = manifest.versions?.find((entry) => entry.id === minecraftVersion);
@@ -182,11 +211,11 @@ async function getVanillaProfile(gameDirectory, minecraftVersion) {
     throw new Error(`Version Minecraft introuvable : ${minecraftVersion}`);
   }
 
-  sendLog(`Téléchargement du profil Vanilla ${minecraftVersion}…`);
+  sendLog(`T\u00e9l\u00e9chargement du profil Vanilla ${minecraftVersion}\u2026`);
 
   const profile = await fetchJson(
     versionEntry.url,
-    `Impossible de récupérer le profil Vanilla ${minecraftVersion}`
+    `Impossible de r\u00e9cup\u00e9rer le profil Vanilla ${minecraftVersion}`
   );
 
   fs.mkdirSync(versionDirectory, { recursive: true });
@@ -194,6 +223,7 @@ async function getVanillaProfile(gameDirectory, minecraftVersion) {
 
   return profile;
 }
+
 
 async function downloadVanilla(gameDirectory, minecraftVersion, vanillaProfile) {
   for (const library of vanillaProfile.libraries || []) {
@@ -218,6 +248,7 @@ async function downloadVanilla(gameDirectory, minecraftVersion, vanillaProfile) 
   return clientJar;
 }
 
+
 async function downloadMinecraftAssets(gameDirectory, vanillaProfile) {
   const assetIndex = vanillaProfile.assetIndex;
 
@@ -238,19 +269,19 @@ async function downloadMinecraftAssets(gameDirectory, vanillaProfile) {
   if (fs.existsSync(indexPath)) {
     try {
       index = JSON.parse(fs.readFileSync(indexPath, "utf8"));
-      sendLog(`Index d'assets déjà présent : ${assetIndex.id}`);
+      sendLog(`Index d'assets d\u00e9j\u00e0 pr\u00e9sent : ${assetIndex.id}`);
     } catch {
       fs.rmSync(indexPath, { force: true });
     }
   }
 
   if (!index) {
-    sendLog(`Téléchargement de l'index d'assets : ${assetIndex.id}`);
+    sendLog(`T\u00e9l\u00e9chargement de l'index d'assets : ${assetIndex.id}`);
 
     const response = await fetch(assetIndex.url);
 
     if (!response.ok) {
-      throw new Error(`Échec téléchargement index assets : HTTP ${response.status}`);
+      throw new Error(`\u00c9chec t\u00e9l\u00e9chargement index assets : HTTP ${response.status}`);
     }
 
     index = await response.json();
@@ -261,7 +292,7 @@ async function downloadMinecraftAssets(gameDirectory, vanillaProfile) {
   let downloaded = 0;
   let present = 0;
 
-  sendLog(`Vérification de ${objects.length} assets Minecraft…`);
+  sendLog(`V\u00e9rification de ${objects.length} assets Minecraft\u2026`);
 
   for (const [assetName, asset] of objects) {
     const hash = asset?.hash;
@@ -290,27 +321,29 @@ async function downloadMinecraftAssets(gameDirectory, vanillaProfile) {
     downloaded++;
 
     if (downloaded % 100 === 0) {
-      sendLog(`Assets téléchargés : ${downloaded}/${objects.length}`);
+      sendLog(`Assets t\u00e9l\u00e9charg\u00e9s : ${downloaded}/${objects.length}`);
     }
   }
 
-  sendLog(`Assets prêts : ${downloaded} téléchargés, ${present} déjà présents.`);
+  sendLog(`Assets pr\u00eats : ${downloaded} t\u00e9l\u00e9charg\u00e9s, ${present} d\u00e9j\u00e0 pr\u00e9sents.`);
 }
+
 
 async function getFabricProfile(minecraftVersion) {
   const loaderVersion = "0.16.14";
 
   sendLog(
-    `Préparation de Fabric Loader ${loaderVersion} pour Minecraft ${minecraftVersion}…`
+    `Pr\u00e9paration de Fabric Loader ${loaderVersion} pour Minecraft ${minecraftVersion}\u2026`
   );
 
   const profile = await fetchJson(
     `https://meta.fabricmc.net/v2/versions/loader/${minecraftVersion}/${loaderVersion}/profile/json`,
-    "Impossible de récupérer le profil Fabric"
+    "Impossible de r\u00e9cup\u00e9rer le profil Fabric"
   );
 
   return { loaderVersion, profile };
 }
+
 
 async function installFabric(gameDirectory, minecraftVersion, loaderVersion, fabricProfile) {
   const fabricVersionId = `fabric-loader-${loaderVersion}-${minecraftVersion}`;
@@ -326,6 +359,7 @@ async function installFabric(gameDirectory, minecraftVersion, loaderVersion, fab
 
   return fabricVersionId;
 }
+
 
 function resolveArguments(argumentsList, variables) {
   const resolved = [];
@@ -352,18 +386,20 @@ function resolveArguments(argumentsList, variables) {
   return resolved;
 }
 
+
 function replaceVariables(value, variables) {
   return value.replace(/\$\{([^}]+)\}/g, (_, key) => {
     return variables[key] ?? `\${${key}}`;
   });
 }
 
+
 function installMods(gameDirectory) {
   const assetsDirectory = path.join(__dirname, "..", "assets");
   const modsDirectory = path.join(gameDirectory, "mods");
 
   if (!fs.existsSync(assetsDirectory)) {
-    sendLog("Dossier assets absent : aucun mod à installer.");
+    sendLog("Dossier assets absent : aucun mod \u00e0 installer.");
     return;
   }
 
@@ -379,9 +415,10 @@ function installMods(gameDirectory) {
       path.join(modsDirectory, mod)
     );
 
-    sendLog(`Mod installé/vérifié : ${mod}`);
+    sendLog(`Mod install\u00e9/v\u00e9rifi\u00e9 : ${mod}`);
   }
 }
+
 
 app.whenReady().then(() => {
   createWindow();
@@ -393,10 +430,11 @@ app.whenReady().then(() => {
   });
 });
 
+
 ipcMain.handle("get-minecraft-versions", async () => {
   const manifest = await fetchJson(
     "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
-    "Impossible de récupérer les versions Minecraft"
+    "Impossible de r\u00e9cup\u00e9rer les versions Minecraft"
   );
 
   return manifest.versions
@@ -409,16 +447,18 @@ ipcMain.handle("get-minecraft-versions", async () => {
     }));
 });
 
+
 ipcMain.handle("login-microsoft", async () => {
-  sendLog("Démarrage de la connexion Microsoft…");
+  sendLog("D\u00e9marrage de la connexion Microsoft\u2026");
 
   const account = await loginWithMicrosoft((status) => {
     sendLog(`[MICROSOFT] ${status}`);
   });
 
-  sendLog(`[MICROSOFT] Connecté : ${account.name}`);
+  sendLog(`[MICROSOFT] Connect\u00e9 : ${account.name}`);
   return account;
 });
+
 
 ipcMain.handle("launch-minecraft", async (_, settings) => {
   const minecraftVersion = settings?.version || "1.21.1";
@@ -432,7 +472,7 @@ ipcMain.handle("launch-minecraft", async (_, settings) => {
 
   if (mode === "online") {
     if (!account?.accessToken || !account?.uuid || !account?.name) {
-      throw new Error("Aucun compte Microsoft Minecraft valide n'est connecté.");
+      throw new Error("Aucun compte Microsoft Minecraft valide n'est connect\u00e9.");
     }
 
     username = account.name;
@@ -459,9 +499,9 @@ ipcMain.handle("launch-minecraft", async (_, settings) => {
   try {
     fs.mkdirSync(gameDirectory, { recursive: true });
 
-    sendLog(`Préparation de Minecraft ${minecraftVersion} avec Fabric…`);
+    sendLog(`Pr\u00e9paration de Minecraft ${minecraftVersion} avec Fabric\u2026`);
     sendLog(`Dossier du jeu : ${gameDirectory}`);
-    sendLog(`Mémoire maximale : ${ram} Mo`);
+    sendLog(`M\u00e9moire maximale : ${ram} Mo`);
 
     const vanillaProfile = await getVanillaProfile(gameDirectory, minecraftVersion);
     const clientJar = await downloadVanilla(gameDirectory, minecraftVersion, vanillaProfile);
@@ -495,7 +535,7 @@ ipcMain.handle("launch-minecraft", async (_, settings) => {
     }
 
     sendLog(`JARs dans le classpath : ${classpathParts.length}`);
-    sendLog(`Intermediary téléchargé : ${intermediaryJar}`);
+    sendLog(`Intermediary t\u00e9l\u00e9charg\u00e9 : ${intermediaryJar}`);
 
     const nativesDirectory = path.join(gameDirectory, "natives", minecraftVersion);
     fs.mkdirSync(nativesDirectory, { recursive: true });
@@ -574,7 +614,7 @@ ipcMain.handle("launch-minecraft", async (_, settings) => {
     });
 
     child.on("close", (code) => {
-      sendLog(`[FIN] Minecraft s'est fermé avec le code ${code}.`);
+      sendLog(`[FIN] Minecraft s'est ferm\u00e9 avec le code ${code}.`);
       sendFinished();
     });
 
@@ -592,6 +632,7 @@ ipcMain.handle("launch-minecraft", async (_, settings) => {
     return { success: false, message };
   }
 });
+
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

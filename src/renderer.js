@@ -180,5 +180,12 @@ playButton.addEventListener("click", async () => {
 });
 
 
+const discordButton = document.getElementById("discordButton");
+
+discordButton.addEventListener("click", () => {
+  const discordUrl = "https://discord.gg/TON_INVITE";
+  window.launcher.openUrl(discordUrl);
+});
+
 // Initialisation
 refreshAccountMode();

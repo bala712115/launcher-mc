@@ -270,3 +270,30 @@ button:disabled {
   border: none;
   background: transparent;
 }
+
+.discord-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: #5865F2; /* bleu Discord */
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.discord-button:hover {
+  background: #4752c4;
+  transform: translateY(-1px);
+}
+
+.discord-button:active {
+  transform: translateY(0);
+}
