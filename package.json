@@ -1,10 +1,10 @@
 {
   "name": "launcher-custom",
   "version": "1.0.0",
-  "description": "",
+  "description": "��#\u0000 \u0000l\u0000a\u0000u\u0000n\u0000c\u0000h\u0000e\u0000r\u0000-\u0000m\u0000c\u0000\r\u0000 \u0000",
   "main": "src/main.js",
   "dependencies": {
-    "@azure/msal-node": "^5.5.0",
+    "@azure/msal-node": "^5.6.0",
     "adm-zip": "^0.4.16",
     "asn1": "^0.2.6",
     "assert-plus": "^1.0.0",
@@ -41,6 +41,7 @@
     "minecraft-launcher-core": "^3.18.2",
     "ms": "^2.1.3",
     "oauth-sign": "^0.9.0",
+    "open": "^11.0.1",
     "optimist": "^0.3.7",
     "performance-now": "^2.1.0",
     "progress": "^2.0.3",
@@ -64,7 +65,7 @@
     "wordwrap": "^0.0.3"
   },
   "devDependencies": {
-    "electron": "^43.4.0",
+    "electron": "^43.4.1",
     "electron-builder": "^26.15.3"
   },
   "scripts": {
@@ -73,7 +74,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bala712115/launcher-mc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bala712115/launcher-mc/issues"
+  },
+  "homepage": "https://github.com/bala712115/launcher-mc#readme"
 }
